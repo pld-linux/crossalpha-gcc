@@ -62,7 +62,7 @@ rm -rf builddir && install -d builddir && cd builddir
 ../configure \
 	--prefix=$FAKE_ROOT/usr \
 	--build=%{_target_platform} \
-	--host=alpha-pld-linux \
+	--host=%{target} \
 	--disable-nls \
 	--with-headers=$FAKE_ROOT/usr/include \
 	--disable-sanity-checks \
