@@ -6,12 +6,17 @@ Summary(pt_BR):	Utilitários para desenvolvimento de binários da GNU - ALPHA gcc
 Summary(tr):	GNU geliþtirme araçlarý - ALPHA gcc
 Name:		crossalpha-gcc
 Version:	3.3.5
-Release:	0.1
+Release:	1
 Epoch:		1
 License:	GPL
 Group:		Development/Languages
 Source0:	ftp://gcc.gnu.org/pub/gcc/releases/gcc-%{version}/gcc-%{version}.tar.bz2
 # Source0-md5:	70ee088b498741bb08c779f9617df3a5
+%define		_llh_ver	2.6.9.1
+Source1:	http://ep09.pld-linux.org/~mmazur/linux-libc-headers/linux-libc-headers-%{_llh_ver}.tar.bz2
+# Source1-md5:	d3507b2c0203a0760a677022badcf455
+Source2:	glibc-20041030.tar.bz2
+# Source2-md5:	4e14871efd881fbbf523a0ba16175bc7
 URL:		http://gcc.gnu.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -45,10 +50,47 @@ Ten pakiet zawiera skro¶ny gcc pozwalaj±cy na robienie na innych
 maszynach binariów do uruchamiania na ALPHA (architektura
 alpha-linux).
 
+%package c++
+Summary:	C++ support for crossalpha-gcc
+Summary(pl):	Obs³uga C++ dla crossalpha-gcc
+Group:		Development/Languages
+Requires:	%{name} = %{epoch}:%{version}-%{release}
+
+%description c++
+This package adds C++ support to the GNU Compiler Collection for ALPHA.
+
+%description c++ -l pl
+Ten pakiet dodaje obs³ugê C++ do kompilatora gcc dla ALPHA.
+
 %prep
-%setup -q -n gcc-%{version}
+%setup -q -n gcc-%{version} -a1 -a2
 
 %build
+FAKE_ROOT=$PWD/fake-root
+
+rm -rf $FAKE_ROOT && install -d $FAKE_ROOT/usr/include
+cp -r linux-libc-headers-%{_llh_ver}/include/{asm-alpha,linux} $FAKE_ROOT/usr/include
+ln -s asm-alpha $FAKE_ROOT/usr/include/asm
+
+cd libc
+rm -rf builddir && install -d builddir && cd builddir
+../configure \
+	--prefix=$FAKE_ROOT/usr \
+	--build=%{_target_platform} \
+	--host=%{target} \
+	--disable-nls \
+	--enable-add-ons=linuxthreads \
+	--with-headers=$FAKE_ROOT/usr/include \
+	--disable-sanity-checks \
+	--enable-hacker-mode
+
+%{__make} sysdeps/gnu/errlist.c
+%{__make} install-headers
+
+install bits/stdio_lim.h $FAKE_ROOT/usr/include/bits
+touch $FAKE_ROOT/usr/include/gnu/stubs.h
+cd ../..
+
 rm -rf obj-%{target}
 install -d obj-%{target}
 cd obj-%{target}
@@ -73,73 +115,49 @@ TEXCONFIG=false \
 	--with-gnu-ld \
 	--with-system-zlib \
 	--with-multilib \
-	--without-headers \
+	--with-sysroot=$FAKE_ROOT \
 	--without-x \
 	--target=%{target} \
 	--host=%{_target_platform} \
 	--build=%{_target_platform}
 
 %{__make} all-gcc
-# -DHAVE_DESIGNATED_INITIALIZERS=0"
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{/lib,%{_datadir},%{_bindir},%{gcclib}}
 
-cd obj-%{target}
-PATH=$PATH:/sbin:%{_sbindir}
-
-%{__make} -C gcc install \
-	prefix=%{_prefix} \
-	mandir=%{_mandir} \
-	infodir=%{_infodir} \
-	gxx_include_dir=$RPM_BUILD_ROOT%{arch}/include/g++ \
+%{__make} -C obj-%{target} install-gcc \
 	DESTDIR=$RPM_BUILD_ROOT
 
-# c++filt is provided by binutils
-#rm -f $RPM_BUILD_ROOT%{_bindir}/i386-mipsel-c++filt
+mv $RPM_BUILD_ROOT%{_mandir}/man1/{,%{target}-}cpp.1
+mv $RPM_BUILD_ROOT%{_mandir}/man1/{,%{target}-}gcov.1
 
-# what is this there for???
-rm -f $RPM_BUILD_ROOT%{_libdir}/libiberty.a
-
-# the same... make hardlink
-#ln -f $RPM_BUILD_ROOT%{arch}/bin/gcc $RPM_BUILD_ROOT%{_bindir}/%{target}-gcc
-
+%if 0%{!?debug:1}
 %{target}-strip -g $RPM_BUILD_ROOT%{gcclib}/libgcc.a
+%{target}-strip -g $RPM_BUILD_ROOT%{gcclib}/libgcov.a
+%endif
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_bindir}/%{target}-gcc
 %attr(755,root,root) %{_bindir}/%{target}-cpp
-%attr(755,root,root) %{_bindir}/%{target}-g++
-%attr(755,root,root) %{_bindir}/%{target}-c++
-#%dir %{arch}/bin
-#%attr(755,root,root) %{arch}/bin/cpp
-#%attr(755,root,root) %{arch}/bin/gcc
-#%attr(755,root,root) %{arch}/bin/gcov
-#%%{arch}/include/_G_config.h
+%attr(755,root,root) %{_bindir}/%{target}-gcc
 %dir %{gccarch}
 %dir %{gcclib}
 %attr(755,root,root) %{gcclib}/cc1
-%attr(755,root,root) %{gcclib}/cc1plus
-##%attr(755,root,root) %{gcclib}/tradcpp0
-##%attr(755,root,root) %{gcclib}/cpp0
 %attr(755,root,root) %{gcclib}/collect2
-#%%{gcclib}/SYSCALLS.c.X
+%{gcclib}/crt*.o
 %{gcclib}/libgcc.a
 %{gcclib}/specs*
 %dir %{gcclib}/include
 %{gcclib}/include/*.h
-#%%{gcclib}/include/iso646.h
-#%%{gcclib}/include/limits.h
-#%%{gcclib}/include/proto.h
-#%%{gcclib}/include/stdarg.h
-#%%{gcclib}/include/stdbool.h
-#%%{gcclib}/include/stddef.h
-#%%{gcclib}/include/syslimits.h
-#%%{gcclib}/include/varargs.h
-#%%{gcclib}/include/va-*.h
+%{_mandir}/man1/%{target}-cpp.1*
 %{_mandir}/man1/%{target}-gcc.1*
+
+%files c++
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_bindir}/%{target}-g++
+%attr(755,root,root) %{gcclib}/cc1plus
+%{_mandir}/man1/%{target}-g++.1*
