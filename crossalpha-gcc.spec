@@ -17,7 +17,9 @@ Source1:	http://ep09.pld-linux.org/~mmazur/linux-libc-headers/linux-libc-headers
 # Source1-md5:	d3507b2c0203a0760a677022badcf455
 Source2:	glibc-20041030.tar.bz2
 # Source2-md5:	4e14871efd881fbbf523a0ba16175bc7
+URL:		http://gcc.gnu.org/
 BuildRequires:	autoconf
+BuildRequires:	automake
 BuildRequires:	bison
 BuildRequires:	crossalpha-binutils
 BuildRequires:	flex
