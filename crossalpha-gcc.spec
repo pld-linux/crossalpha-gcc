@@ -78,6 +78,7 @@ install bits/stdio_lim.h $FAKE_ROOT/usr/include/bits
 touch $FAKE_ROOT/usr/include/gnu/stubs.h
 cd ../..
 
+cp -f /usr/share/automake/config.* .
 rm -rf obj-%{target}
 install -d obj-%{target}
 cd obj-%{target}
