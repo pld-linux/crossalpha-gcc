@@ -5,13 +5,13 @@ Summary(pl):	Skro¶ne narzêdzia programistyczne GNU dla ALPHA - gcc
 Summary(pt_BR):	Utilitários para desenvolvimento de binários da GNU - ALPHA gcc
 Summary(tr):	GNU geliþtirme araçlarý - ALPHA gcc
 Name:		crossalpha-gcc
-Version:	3.3.3
-Release:	2
+Version:	3.3.5
+Release:	0.1
 Epoch:		1
 License:	GPL
 Group:		Development/Languages
 Source0:	ftp://gcc.gnu.org/pub/gcc/releases/gcc-%{version}/gcc-%{version}.tar.bz2
-# Source0-md5:	3c6cfd9fcd180481063b4058cf6faff2
+# Source0-md5:	70ee088b498741bb08c779f9617df3a5
 BuildRequires:	autoconf
 BuildRequires:	bison
 BuildRequires:	crossalpha-binutils
@@ -23,12 +23,11 @@ ExcludeArch:	alpha
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		target		alpha-pld-linux
-%define		_prefix		/usr
 %define		arch		%{_prefix}/%{target}
-%define		gccarch		%{_prefix}/lib/gcc-lib/%{target}
-%define		gcclib		%{_prefix}/lib/gcc-lib/%{target}/%{version}
+%define		gccarch		%{_libdir}/gcc-lib/%{target}
+%define		gcclib		%{gccarch}/%{version}
 
-%define		_noautostrip	.*libgcc\\.a
+%define		_noautostrip	.*libgc.*\\.a
 
 %description
 This package contains a cross-gcc which allows the creation of
@@ -53,13 +52,18 @@ cd obj-%{target}
 
 CFLAGS="%{rpmcflags}" \
 CXXFLAGS="%{rpmcflags}" \
-TEXCONFIG=false ../configure \
+TEXCONFIG=false \
+../configure \
 	--prefix=%{_prefix} \
 	--infodir=%{_infodir} \
 	--mandir=%{_mandir} \
+	--bindir=%{_bindir} \
+	--libdir=%{_libdir} \
+	--libexecdir=%{_libdir} \
 	--disable-shared \
 	--enable-haifa \
 	--enable-languages="c,c++" \
+	--enable-c99 \
 	--enable-long-long \
 	--enable-namespaces \
 	--with-gnu-as \
@@ -67,19 +71,13 @@ TEXCONFIG=false ../configure \
 	--with-system-zlib \
 	--with-multilib \
 	--without-headers \
-	--with-newlib \
 	--without-x \
 	--target=%{target} \
 	--host=%{_target_platform} \
 	--build=%{_target_platform}
 
-PATH=$PATH:/sbin:%{_sbindir}
-
-cd ..
-#LDFLAGS_FOR_TARGET="%{rpmldflags}"
-
-%{__make} -C obj-%{target}
-# CC="gcc -DHAVE_DESIGNATED_INITIALIZERS=0" all-gcc
+%{__make} all-gcc
+# -DHAVE_DESIGNATED_INITIALIZERS=0"
 
 %install
 rm -rf $RPM_BUILD_ROOT
