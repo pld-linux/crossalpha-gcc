@@ -6,12 +6,17 @@ Summary(pt_BR):	Utilitários para desenvolvimento de binários da GNU - ALPHA gcc
 Summary(tr):	GNU geliþtirme araçlarý - ALPHA gcc
 Name:		crossalpha-gcc
 Version:	3.4.3
-Release:	0.1
+Release:	1
 Epoch:		1
 License:	GPL
 Group:		Development/Languages
 Source0:	ftp://gcc.gnu.org/pub/gcc/releases/gcc-%{version}/gcc-%{version}.tar.bz2
 # Source0-md5:	e744b30c834360fccac41eb7269a3011
+%define		_llh_ver	2.6.9.1
+Source1:	http://ep09.pld-linux.org/~mmazur/linux-libc-headers/linux-libc-headers-%{_llh_ver}.tar.bz2
+# Source1-md5:	d3507b2c0203a0760a677022badcf455
+Source2:	glibc-20041030.tar.bz2
+# Source2-md5:	4e14871efd881fbbf523a0ba16175bc7
 BuildRequires:	autoconf
 BuildRequires:	bison
 BuildRequires:	crossalpha-binutils
@@ -43,9 +48,33 @@ Ten pakiet zawiera skro¶ny gcc pozwalaj±cy na robienie na maszynach
 i386 binariów do uruchamiania na ALPHA (architektura "alpha-linux").
 
 %prep
-%setup -q -n gcc-%{version}
+%setup -q -n gcc-%{version} -a1 -a2
 
 %build
+FAKE_ROOT=$PWD/fake-root
+
+rm -rf $FAKE_ROOT && install -d $FAKE_ROOT/usr/include
+cp -r linux-libc-headers-%{_llh_ver}/include/{asm-alpha,linux} $FAKE_ROOT/usr/include
+ln -s asm-alpha $FAKE_ROOT/usr/include/asm
+
+cd libc
+rm -rf builddir && install -d builddir && cd builddir
+../configure \
+	--prefix=$FAKE_ROOT/usr \
+	--build=%{_target_platform} \
+	--host=alpha-pld-linux \
+	--disable-nls \
+	--with-headers=$FAKE_ROOT/usr/include \
+	--disable-sanity-checks \
+	--enable-hacker-mode
+
+%{__make} sysdeps/gnu/errlist.c
+%{__make} install-headers
+
+install bits/stdio_lim.h $FAKE_ROOT/usr/include/bits
+touch $FAKE_ROOT/usr/include/gnu/stubs.h
+cd ../..
+
 rm -rf obj-%{target}
 install -d obj-%{target}
 cd obj-%{target}
@@ -63,12 +92,13 @@ TEXCONFIG=false \
 	--disable-shared \
 	--disable-threads \
 	--enable-languages="c" \
+	--enable-c99 \
+	--enable-long-long \
 	--with-gnu-as \
 	--with-gnu-ld \
 	--with-system-zlib \
 	--with-multilib \
-	--with-newlib \
-	--without-headers \
+	--with-sysroot=$FAKE_ROOT \
 	--without-x \
 	--target=%{target} \
 	--host=%{_target_platform} \
