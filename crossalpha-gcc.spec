@@ -12,7 +12,9 @@ License:	GPL
 Group:		Development/Languages
 Source0:	ftp://gcc.gnu.org/pub/gcc/releases/gcc-%{version}/gcc-%{version}.tar.bz2
 # Source0-md5:	70ee088b498741bb08c779f9617df3a5
+URL:		http://gcc.gnu.org/
 BuildRequires:	autoconf
+BuildRequires:	automake
 BuildRequires:	bison
 BuildRequires:	crossalpha-binutils
 BuildRequires:	flex
@@ -32,15 +34,16 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %description
 This package contains a cross-gcc which allows the creation of
 binaries to be run on ALPHA linux (architecture alpha-linux) on
-i386-machines.
+other machines.
 
 %description -l de
 Dieses Paket enthält einen Cross-gcc, der es erlaubt, auf einem
-i386-Rechner Code für alpha-Linux zu generieren.
+anderem Rechner Code für alpha-Linux zu generieren.
 
 %description -l pl
-Ten pakiet zawiera skro¶ny gcc pozwalaj±cy na robienie na maszynach
-i386 binariów do uruchamiania na ALPHA (architektura "alpha-linux").
+Ten pakiet zawiera skro¶ny gcc pozwalaj±cy na robienie na innych
+maszynach binariów do uruchamiania na ALPHA (architektura
+alpha-linux).
 
 %prep
 %setup -q -n gcc-%{version}
