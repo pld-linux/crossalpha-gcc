@@ -60,6 +60,7 @@ cp -r linux-libc-headers-%{_llh_ver}/include/{asm-alpha,linux} $FAKE_ROOT/usr/in
 ln -s asm-alpha $FAKE_ROOT/usr/include/asm
 
 cd libc
+cp -f /usr/share/automake/config.* scripts
 rm -rf builddir && install -d builddir && cd builddir
 ../configure \
 	--prefix=$FAKE_ROOT/usr \
