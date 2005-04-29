@@ -29,7 +29,6 @@ BuildRequires:	bison
 BuildRequires:	crossalpha-binutils
 BuildRequires:	fileutils >= 4.0.41
 BuildRequires:	flex
-BuildRequires:	gettext-devel
 BuildRequires:	texinfo >= 4.1
 Requires:	crossalpha-binutils
 Requires:	gcc-dirs
@@ -121,7 +120,7 @@ TEXCONFIG=false \
 	--enable-languages="c,c++" \
 	--enable-c99 \
 	--enable-long-long \
-	--enable-nls \
+	--disable-nls \
 	--with-gnu-as \
 	--with-gnu-ld \
 	--with-demangler-in-ld \
@@ -151,12 +150,10 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/libiberty.a
 %{target}-strip -g $RPM_BUILD_ROOT%{gcclib}/libgcov.a
 %endif
 
-%find_lang gcc
-
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%files -f gcc.lang
+%files
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/%{target}-cpp
 %attr(755,root,root) %{_bindir}/%{target}-gcc
