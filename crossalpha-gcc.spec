@@ -6,7 +6,7 @@ Summary(pt_BR):	Utilitários para desenvolvimento de binários da GNU - ALPHA gcc
 Summary(tr):	GNU geliþtirme araçlarý - ALPHA gcc
 Name:		crossalpha-gcc
 Version:	4.0.0
-Release:	1
+Release:	2
 Epoch:		1
 License:	GPL
 Group:		Development/Languages
@@ -144,6 +144,18 @@ install obj-%{target}/gcc/specs $RPM_BUILD_ROOT%{gcclib}
 
 # don't want this here
 rm -f $RPM_BUILD_ROOT%{_libdir}/libiberty.a
+
+# include/ contains install-tools/include/* and headers that were fixed up
+# by fixincludes, we don't want former
+gccdir=$RPM_BUILD_ROOT%{gcclib}
+mkdir	$gccdir/tmp
+# we have to save these however
+mv -f	$gccdir/include/syslimits.h $gccdir/tmp
+rm -rf	$gccdir/include
+mv -f	$gccdir/tmp $gccdir/include
+cp -f	$gccdir/install-tools/include/*.h $gccdir/include
+# but we don't want anything more from install-tools
+rm -rf	$gccdir/install-tools
 
 %if 0%{!?debug:1}
 %{target}-strip -g $RPM_BUILD_ROOT%{gcclib}/libgcc.a
