@@ -45,16 +45,15 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
 This package contains a cross-gcc which allows the creation of
-binaries to be run on ALPHA linux (architecture alpha-linux) on
-i386-machines.
+binaries to be run on ALPHA Linux on other machines.
 
 %description -l de
 Dieses Paket enthält einen Cross-gcc, der es erlaubt, auf einem
-i386-Rechner Code für alpha-Linux zu generieren.
+anderem Rechner Code für ALPHA Linux zu generieren.
 
 %description -l pl
-Ten pakiet zawiera skro¶ny gcc pozwalaj±cy na robienie na maszynach
-i386 binariów do uruchamiania na ALPHA (architektura "alpha-linux").
+Ten pakiet zawiera skro¶ny gcc pozwalaj±cy na robienie na innych
+maszynach binariów do uruchamiania na Linuksie ALPHA.
 
 %package c++
 Summary:	C++ support for crossalpha-gcc
