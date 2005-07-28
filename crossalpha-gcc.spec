@@ -5,18 +5,21 @@ Summary(pl):	Skro¶ne narzêdzia programistyczne GNU dla ALPHA - gcc
 Summary(pt_BR):	Utilitários para desenvolvimento de binários da GNU - ALPHA gcc
 Summary(tr):	GNU geliþtirme araçlarý - ALPHA gcc
 Name:		crossalpha-gcc
-Version:	3.3.5
-Release:	3
+Version:	3.3.6
+Release:	1
 Epoch:		1
 License:	GPL
 Group:		Development/Languages
 Source0:	ftp://gcc.gnu.org/pub/gcc/releases/gcc-%{version}/gcc-%{version}.tar.bz2
-# Source0-md5:	70ee088b498741bb08c779f9617df3a5
-%define		_llh_ver	2.6.9.1
+# Source0-md5:	6936616a967da5a0b46f1e7424a06414
+%define		_llh_ver	2.6.12.0
 Source1:	http://ep09.pld-linux.org/~mmazur/linux-libc-headers/linux-libc-headers-%{_llh_ver}.tar.bz2
-# Source1-md5:	d3507b2c0203a0760a677022badcf455
-Source2:	glibc-20041030.tar.bz2
-# Source2-md5:	4e14871efd881fbbf523a0ba16175bc7
+# Source1-md5:	eae2f562afe224ad50f65a6acfb4252c
+%define		_glibc_ver	2.3.5
+Source2:	ftp://sources.redhat.com/pub/glibc/releases/glibc-%{_glibc_ver}.tar.bz2
+# Source2-md5:	93d9c51850e0513aa4846ac0ddcef639
+Source3:	ftp://sources.redhat.com/pub/glibc/releases/glibc-linuxthreads-%{_glibc_ver}.tar.bz2
+# Source3-md5:	77011b0898393c56b799bc011a0f37bf
 URL:		http://gcc.gnu.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -63,7 +66,8 @@ This package adds C++ support to the GNU Compiler Collection for ALPHA.
 Ten pakiet dodaje obs³ugê C++ do kompilatora gcc dla ALPHA.
 
 %prep
-%setup -q -n gcc-%{version} -a1 -a2
+%setup -q -n gcc-%{version} -a1 -a2 -a3
+mv linuxthreads* glibc-%{_glibc_ver}
 
 %build
 FAKE_ROOT=$PWD/fake-root
@@ -72,7 +76,7 @@ rm -rf $FAKE_ROOT && install -d $FAKE_ROOT/usr/include
 cp -r linux-libc-headers-%{_llh_ver}/include/{asm-alpha,linux} $FAKE_ROOT/usr/include
 ln -s asm-alpha $FAKE_ROOT/usr/include/asm
 
-cd libc
+cd glibc-%{_glibc_ver}
 cp -f /usr/share/automake/config.* scripts
 rm -rf builddir && install -d builddir && cd builddir
 ../configure \
@@ -134,9 +138,24 @@ rm -rf $RPM_BUILD_ROOT
 mv $RPM_BUILD_ROOT%{_mandir}/man1/{,%{target}-}cpp.1
 mv $RPM_BUILD_ROOT%{_mandir}/man1/{,%{target}-}gcov.1
 
+# don't want this here
+rm -f $RPM_BUILD_ROOT%{_libdir}/libiberty.a
+
+# include/ contains install-tools/include/* and headers that were fixed up
+# by fixincludes, we don't want former
+gccdir=$RPM_BUILD_ROOT%{gcclib}
+mkdir	$gccdir/tmp
+# we have to save these however
+mv -f	$gccdir/include/syslimits.h $gccdir/tmp
+rm -rf	$gccdir/include
+mv -f	$gccdir/tmp $gccdir/include
+cp -f	$gccdir/install-tools/include/*.h $gccdir/include
+# but we don't want anything more from install-tools
+rm -rf	$gccdir/install-tools
+
 %if 0%{!?debug:1}
-%{target}-strip -g $RPM_BUILD_ROOT%{gcclib}/libgcc.a
-%{target}-strip -g $RPM_BUILD_ROOT%{gcclib}/libgcov.a
+%{target}-strip -g -R.note -R.comment $RPM_BUILD_ROOT%{gcclib}/libgcc.a
+%{target}-strip -g -R.note -R.comment $RPM_BUILD_ROOT%{gcclib}/libgcov.a
 %endif
 
 %clean
