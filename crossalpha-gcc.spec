@@ -5,21 +5,22 @@ Summary(pl):	Skro¶ne narzêdzia programistyczne GNU dla ALPHA - gcc
 Summary(pt_BR):	Utilitários para desenvolvimento de binários da GNU - ALPHA gcc
 Summary(tr):	GNU geliþtirme araçlarý - ALPHA gcc
 Name:		crossalpha-gcc
-Version:	4.0.2
+Version:	4.1.1
 Release:	1
 Epoch:		1
 License:	GPL
 Group:		Development/Languages
 Source0:	ftp://gcc.gnu.org/pub/gcc/releases/gcc-%{version}/gcc-%{version}.tar.bz2
-# Source0-md5:	a659b8388cac9db2b13e056e574ceeb0
+# Source0-md5:	ad9f97a4d04982ccf4fd67cb464879f3
 %define		_llh_ver	2.6.12.0
 Source1:	http://ep09.pld-linux.org/~mmazur/linux-libc-headers/linux-libc-headers-%{_llh_ver}.tar.bz2
 # Source1-md5:	eae2f562afe224ad50f65a6acfb4252c
-%define		_glibc_ver	2.3.5
+%define		_glibc_ver	2.3.6
 Source2:        ftp://sources.redhat.com/pub/glibc/releases/glibc-%{_glibc_ver}.tar.bz2
-# Source2-md5:	93d9c51850e0513aa4846ac0ddcef639
+# Source2-md5:	bfdce99f82d6dbcb64b7f11c05d6bc96
 Source3:        ftp://sources.redhat.com/pub/glibc/releases/glibc-linuxthreads-%{_glibc_ver}.tar.bz2
-# Source3-md5:	77011b0898393c56b799bc011a0f37bf
+# Source3-md5:	d4eeda37472666a15cc1f407e9c987a9
+Patch0:		gcc-pr25672.patch
 URL:		http://gcc.gnu.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -66,6 +67,7 @@ Ten pakiet dodaje obs³ugê C++ do kompilatora gcc dla ALPHA.
 
 %prep
 %setup -q -n gcc-%{version} -a1 -a2 -a3
+%patch0 -p1
 mv linuxthreads* glibc-%{_glibc_ver}
 
 %build
