@@ -1,9 +1,9 @@
 Summary:	Cross ALPHA GNU binary utility development utilities - gcc
-Summary(es.UTF-8):   Utilitarios para desarrollo de binarios de la GNU - ALPHA gcc
-Summary(fr.UTF-8):   Utilitaires de développement binaire de GNU - ALPHA gcc
-Summary(pl.UTF-8):   Skrośne narzędzia programistyczne GNU dla ALPHA - gcc
-Summary(pt_BR.UTF-8):   Utilitários para desenvolvimento de binários da GNU - ALPHA gcc
-Summary(tr.UTF-8):   GNU geliştirme araçları - ALPHA gcc
+Summary(es.UTF-8):	Utilitarios para desarrollo de binarios de la GNU - ALPHA gcc
+Summary(fr.UTF-8):	Utilitaires de développement binaire de GNU - ALPHA gcc
+Summary(pl.UTF-8):	Skrośne narzędzia programistyczne GNU dla ALPHA - gcc
+Summary(pt_BR.UTF-8):	Utilitários para desenvolvimento de binários da GNU - ALPHA gcc
+Summary(tr.UTF-8):	GNU geliştirme araçları - ALPHA gcc
 Name:		crossalpha-gcc
 Version:	4.1.1
 Release:	1
@@ -55,7 +55,7 @@ maszynach binariów do uruchamiania na Linuksie ALPHA.
 
 %package c++
 Summary:	C++ support for crossalpha-gcc
-Summary(pl.UTF-8):   Obsługa C++ dla crossalpha-gcc
+Summary(pl.UTF-8):	Obsługa C++ dla crossalpha-gcc
 Group:		Development/Languages
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 
