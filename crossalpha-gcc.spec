@@ -6,7 +6,7 @@ Summary(pt_BR.UTF-8):	Utilitários para desenvolvimento de binários da GNU - AL
 Summary(tr.UTF-8):	GNU geliştirme araçları - ALPHA gcc
 Name:		crossalpha-gcc
 Version:	4.1.1
-Release:	2
+Release:	3
 Epoch:		1
 License:	GPL
 Group:		Development/Languages
