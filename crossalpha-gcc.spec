@@ -67,7 +67,7 @@ Ten pakiet dodaje obsługę C++ do kompilatora gcc dla ALPHA.
 
 %prep
 %setup -q -n gcc-%{version} -a1 -a2 -a3
-%patch0 -p1
+%patch -P0 -p1
 mv linuxthreads* glibc-%{_glibc_ver}
 
 %build
